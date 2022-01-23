@@ -37,6 +37,6 @@ public class ClientEntity {
     private String phone;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
-    @JsonIgnore
+
     private List<PetEntity> petEntities;
 }

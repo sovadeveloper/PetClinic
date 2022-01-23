@@ -21,9 +21,8 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public PetEntity create(PetEntity petEntity) throws Exception {
-        ClientEntity clientEntity = clientRepo.findById(petEntity.getClient().getId())
+        clientRepo.findById(petEntity.getClient().getId())
                 .orElseThrow(() -> new Exception("Такого клиента не существует"));
-        petEntity.setClient(clientEntity);
         return petRepo.save(petEntity);
     }
 
@@ -37,10 +36,9 @@ public class PetServiceImpl implements PetService {
     public PetEntity edit(Long id, PetEntity petEntityUpdated) throws Exception {
         PetEntity petEntity = petRepo.findById(id)
                 .orElseThrow(() -> new Exception("Такого питомца не существует"));
-        ClientEntity clientEntity = clientRepo.findById(petEntityUpdated.getClient().getId())
+        clientRepo.findById(petEntityUpdated.getClient().getId())
                 .orElseThrow(() -> new Exception("Такого клиента не существует"));
         petEntity.setName(petEntityUpdated.getName());
-        petEntity.setClient(clientEntity);
         return petRepo.save(petEntity);
     }
 
