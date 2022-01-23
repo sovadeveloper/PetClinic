@@ -8,11 +8,12 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
 @Table(name = "pets")
 public class PetEntity {
     @Id
@@ -28,4 +29,11 @@ public class PetEntity {
     @JoinColumn(name = "client_id")
     @JsonIgnore
     private ClientEntity client;
+
+    @ManyToOne
+    @JoinColumn(name = "petType_id")
+    private PetTypeEntity petType;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pet")
+    private List<NoteEntity> noteEntities;
 }
