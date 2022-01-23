@@ -1,20 +1,18 @@
 package com.sovadeveloper.petClinic.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
 @Table(name = "clients")
 public class ClientEntity {
     @Id
@@ -37,6 +35,5 @@ public class ClientEntity {
     private String phone;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
-
     private List<PetEntity> petEntities;
 }
