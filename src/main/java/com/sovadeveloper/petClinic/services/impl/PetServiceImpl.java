@@ -1,13 +1,15 @@
 package com.sovadeveloper.petClinic.services.impl;
 
-import com.sovadeveloper.petClinic.entities.ClientEntity;
+import com.sovadeveloper.petClinic.dto.PetDTO;
 import com.sovadeveloper.petClinic.entities.PetEntity;
 import com.sovadeveloper.petClinic.repositories.ClientRepo;
 import com.sovadeveloper.petClinic.repositories.PetRepo;
+import com.sovadeveloper.petClinic.repositories.PetTypeRepo;
 import com.sovadeveloper.petClinic.services.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,28 +20,35 @@ public class PetServiceImpl implements PetService {
     @Autowired
     private ClientRepo clientRepo;
 
+    @Autowired
+    private PetTypeRepo petTypeRepo;
+
 
     @Override
-    public PetEntity create(PetEntity petEntity) throws Exception {
+    public PetDTO create(PetEntity petEntity) throws Exception {
         clientRepo.findById(petEntity.getClient().getId())
                 .orElseThrow(() -> new Exception("Такого клиента не существует"));
-        return petRepo.save(petEntity);
+        petTypeRepo.findById(petEntity.getPetType().getId())
+                .orElseThrow(() -> new Exception("Такого типа животного не существует"));
+        return PetDTO.toModel(petRepo.save(petEntity));
     }
 
     @Override
-    public PetEntity getById(Long id) throws Exception {
-        return petRepo.findById(id)
-                .orElseThrow(() -> new Exception("Такого питомца не существует"));
+    public PetDTO getById(Long id) throws Exception {
+        return PetDTO.toModel(petRepo.findById(id)
+                .orElseThrow(() -> new Exception("Такого питомца не существует")));
     }
 
     @Override
-    public PetEntity edit(Long id, PetEntity petEntityUpdated) throws Exception {
+    public PetDTO edit(Long id, PetEntity petEntityUpdated) throws Exception {
         PetEntity petEntity = petRepo.findById(id)
                 .orElseThrow(() -> new Exception("Такого питомца не существует"));
         clientRepo.findById(petEntityUpdated.getClient().getId())
                 .orElseThrow(() -> new Exception("Такого клиента не существует"));
+        petTypeRepo.findById(petEntity.getPetType().getId())
+                .orElseThrow(() -> new Exception("Такого типа животного не существует"));
         petEntity.setName(petEntityUpdated.getName());
-        return petRepo.save(petEntity);
+        return PetDTO.toModel(petRepo.save(petEntity));
     }
 
     @Override
@@ -51,7 +60,12 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetEntity> getAll() throws Exception {
-        return (List<PetEntity>) petRepo.findAll();
+    public List<PetDTO> getAll() throws Exception {
+        List<PetEntity> petEntities = (List<PetEntity>) petRepo.findAll();
+        List<PetDTO> petDTOS = new ArrayList<>();
+        for(PetEntity petEntity: petEntities){
+            petDTOS.add(PetDTO.toModel(petEntity));
+        }
+        return petDTOS;
     }
 }
