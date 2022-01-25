@@ -1,6 +1,5 @@
 package com.sovadeveloper.petClinic.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +26,6 @@ public class PetEntity {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
-    @JsonIgnore
     private ClientEntity client;
 
     @ManyToOne

@@ -5,9 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,11 +17,7 @@ public class NoteEntity {
     private Long id;
 
     @Column(name = "title")
-    private String name;
-
-    @Future
-    @Column(name = "date", nullable = false)
-    private LocalDateTime date;
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")

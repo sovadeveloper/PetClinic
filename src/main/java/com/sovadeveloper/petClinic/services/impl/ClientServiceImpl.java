@@ -1,11 +1,13 @@
 package com.sovadeveloper.petClinic.services.impl;
 
+import com.sovadeveloper.petClinic.dto.ClientDTO;
 import com.sovadeveloper.petClinic.entities.ClientEntity;
 import com.sovadeveloper.petClinic.repositories.ClientRepo;
 import com.sovadeveloper.petClinic.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,32 +16,33 @@ public class ClientServiceImpl implements ClientService {
     private ClientRepo clientRepo;
 
     @Override
-    public ClientEntity create(ClientEntity clientEntity) throws Exception {
+    public ClientDTO create(ClientEntity clientEntity) throws Exception {
         ClientEntity clientEntityCheckPhone = clientRepo.findByPhone(clientEntity.getPhone());
         if(clientEntityCheckPhone != null && clientEntityCheckPhone.getPhone().equals(clientEntity.getPhone())){
             throw new Exception("Пользователь с данным номером уже существует");
         }
-        return clientRepo.save(clientEntity);
+        return ClientDTO.toModel(clientRepo.save(clientEntity));
     }
 
     @Override
-    public ClientEntity getById(Long id) throws Exception {
-        return clientRepo.findById(id)
-                .orElseThrow(() -> new Exception("Такого пользователя не существует"));
+    public ClientDTO getById(Long id) throws Exception {
+        return ClientDTO.toModel(clientRepo.findById(id)
+                .orElseThrow(() -> new Exception("Такого пользователя не существует")));
     }
 
     @Override
-    public ClientEntity edit(Long id, ClientEntity clientEntityUpdated) throws Exception {
+    public ClientDTO edit(Long id, ClientEntity clientEntityUpdated) throws Exception {
         ClientEntity clientEntity = clientRepo.findById(id)
                 .orElseThrow(() -> new Exception("Такого пользователя не существует"));
-        ClientEntity clientEntityCheckPhone = clientRepo.findByPhone(clientEntity.getPhone());
-        if(clientEntityCheckPhone != null && clientEntityCheckPhone.getPhone().equals(clientEntity.getPhone())){
+        ClientEntity clientEntityCheckPhone = clientRepo.findByPhone(clientEntityUpdated.getPhone());
+        if(clientEntityCheckPhone != null && clientEntityCheckPhone.getPhone().equals(clientEntity.getPhone())
+        && !clientEntityCheckPhone.getId().equals(clientEntity.getId())){
             throw new Exception("Пользователь с данным номером уже существует");
         }
         clientEntity.setName(clientEntityUpdated.getName());
         clientEntity.setSurname(clientEntityUpdated.getSurname());
         clientEntity.setPhone(clientEntityUpdated.getPhone());
-        return clientRepo.save(clientEntity);
+        return ClientDTO.toModel(clientRepo.save(clientEntity));
     }
 
     @Override
@@ -51,7 +54,12 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientEntity> getAll() throws Exception {
-        return (List<ClientEntity>) clientRepo.findAll();
+    public List<ClientDTO> getAll() throws Exception {
+        List<ClientEntity> clientEntities = (List<ClientEntity>) clientRepo.findAll();
+        List<ClientDTO> clientDTOS = new ArrayList<>();
+        for(ClientEntity clientEntity: clientEntities){
+            clientDTOS.add(ClientDTO.toModel(clientEntity));
+        }
+        return clientDTOS;
     }
 }
