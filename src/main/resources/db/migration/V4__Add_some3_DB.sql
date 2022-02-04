@@ -1,0 +1,1 @@
+INSERT INTO doctors (id, name) VALUES (3, 'Доктор3');
